@@ -20,7 +20,6 @@
   },
   "Água Doce": {
     "Arabutã": 15,
-    "Jaborá": 19,
     "Jaborá": 25,
     "Lacerdópolis": 15,
     "Luzerna": 15,
@@ -507,7 +506,6 @@
   "Erval Velho": {
     "Arvoredo": 15,
     "Herval d'Oeste": 20,
-    "Jaborá": 25,
     "Jaborá": 28
   },
   "Faxinal dos Guedes": {
@@ -676,13 +674,11 @@
   "Iomerê": {
     "Ipira": 15,
     "Jaborá": 12,
-    "Jaborá": 15,
     "Videira": 18
   },
   "Ipira": {
     "Arabutã": 22,
     "Iomerê": 15,
-    "Jaborá": 20,
     "Jaborá": 25
   },
   "Iporã do Oeste": {
@@ -752,11 +748,10 @@
   "Itapoá": {
     "Araquari": 22,
     "Balneário Barra do Sul": 20,
-    "Barra
-
- Velha": 20,
-    "Guarapuava": 15
+    "Barra Velha": 20
   },
+
+
   "Ituporanga": {
     "Alto Bela Vista": 22,
     "Petrolândia": 25,
@@ -1160,11 +1155,9 @@
   "Ponte Alta": {
     "Campo Belo do Sul": 25,
     "Curitibanos": 10,
-    "Curitibanos": 15,
     "Ponte Alta do Norte": 10
   },
   "Ponte Alta do Norte": {
-    "Curitibanos": 15,
     "Curitibanos": 15,
     "Lebon Régis": 15,
     "Painel": 18,
@@ -1180,7 +1173,6 @@
   },
   "Porto Belo": {
     "Bombinhas": 15,
-    "Bombinhas": 10,
     "Camboriú": 10,
     "Itajaí": 15
   },
@@ -1393,10 +1385,10 @@
   "São Cristovão do Sul": {
     "Arabutã": 25,
     "Herval d'Oeste": 20,
-    "Jaborá": 18,
-    "Jaborá": 20
-  },
-  "São Domingos": {
+    "Jaborá": 18
+   },
+
+    "São Domingos": {
     "Chapecó": 22,
     "Seara": 20,
     "Xaxim": 22
@@ -1505,9 +1497,7 @@
   },
   "Seara": {
     "Chapecó": 20,
-    "Concórdia
-
-": 15,
+    "Concórdia": 15,
     "Xavantina": 15,
     "Xaxim": 20
   },
@@ -1734,7 +1724,6 @@
     "Cordilheira Alta": 20,
     "Lajeado Grande": 20,
     "Passos Maia": 20,
-    "Seara": 20,
     "Seara": 20,
     "Sul Brasil": 20,
     "União do Oeste": 20,

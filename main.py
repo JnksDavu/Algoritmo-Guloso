@@ -1,63 +1,95 @@
 import json
 
-import re
-
-def carregar_dados(arquivo):
-    with open(arquivo, "r", encoding="utf-8") as f:
-        conteudo = f.read()
-
-    # Remove caracteres de controle inválidos
-    conteudo = re.sub(r"[\x00-\x1F\x7F]", "", conteudo)
-
-    return json.loads(conteudo)
-
-
-with open("cidadesSCDistâncias.json", "r", encoding="utf-8") as f:
+def carregar_dados(caminho_arquivo):
+    """Carrega o mapa de cidades a partir de um arquivo JSON."""
     try:
-        dados = json.load(f)
-        print("JSON carregado com sucesso!")
-    except json.JSONDecodeError as e:
-        print(f"Erro ao carregar JSON: {e}")
+        with open(caminho_arquivo, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print(f"Erro: Arquivo '{caminho_arquivo}' não encontrado!")
+        return None
+    except json.JSONDecodeError:
+        print("Erro: Falha ao decodificar o arquivo JSON!")
+        return None
 
+def encontrar_proximo_destino(vizinhos_disponiveis):
+    """Encontra o vizinho mais próximo com base na menor distância."""
+    return min(vizinhos_disponiveis, key=vizinhos_disponiveis.get)
 
-def encontrar_caminho_guloso(mapa, origem, destino):
-    if origem not in mapa or destino not in mapa:
-        return None, "Cidade de origem ou destino não encontrada."
+def algoritmo_guloso(mapa_cidades, origem, destino):
+    """Executa o algoritmo guloso para encontrar o menor caminho entre origem e destino."""
+    caminho, cidades_visitadas = [], set()
+    cidade_atual, distancia_total, logs = origem, 0, []
     
-    caminho = [origem]
-    distancia_total = 0
-    atual = origem
-    visitadas = set()
-    visitadas.add(origem)
+    logs.append(f"[INÍCIO] Buscando rota de {origem} para {destino}...")
     
-    while atual != destino:
-        vizinhos = [(cidade, dist) for cidade, dist in mapa[atual].items() if cidade not in visitadas]
+    while cidade_atual != destino:
+        if cidade_atual not in mapa_cidades:
+            logs.append(f"[ERRO] Cidade {cidade_atual} não encontrada no mapa!")
+            return None, None, logs
         
-        if not vizinhos:
-            return None, "Não há caminho disponível para o destino."
+        caminho.append(cidade_atual)
+        cidades_visitadas.add(cidade_atual)
+        logs.append(f"[VISITA] Cidade atual: {cidade_atual}")
         
-        proxima_cidade, menor_distancia = min(vizinhos, key=lambda x: x[1])
-        caminho.append(proxima_cidade)
-        distancia_total += menor_distancia
-        atual = proxima_cidade
-        visitadas.add(proxima_cidade)
+        vizinhos_disponiveis = {c: d for c, d in mapa_cidades[cidade_atual].items() if c not in cidades_visitadas}
+        logs.append(f"[OPÇÕES] Vizinhos disponíveis: {', '.join(f'{c} ({d} km)' for c, d in vizinhos_disponiveis.items())}")
+        
+        if destino in vizinhos_disponiveis:
+            distancia_total += vizinhos_disponiveis[destino]
+            caminho.append(destino)
+            logs.append(f"[SUCESSO] Destino {destino} encontrado! Distância total: {distancia_total} km")
+            return caminho, distancia_total, logs
+        
+        if not vizinhos_disponiveis:
+            logs.append("[FALHA] Nenhum caminho disponível - rota impossível!")
+            return None, None, logs
+        
+        proxima_cidade = encontrar_proximo_destino(vizinhos_disponiveis)
+        distancia_total += vizinhos_disponiveis[proxima_cidade]
+        
+        logs.append(f"[DECISÃO] Próxima cidade: {proxima_cidade} (Menor distância: {vizinhos_disponiveis[proxima_cidade]} km)")
+        logs.append(f"[PROGRESSO] Distância acumulada: {distancia_total} km")
+        
+        cidade_atual = proxima_cidade
+        
+        if len(caminho) > len(mapa_cidades):
+            logs.append("[ERRO] Número máximo de cidades excedido - possível loop detectado!")
+            return None, None, logs
     
-    return caminho, distancia_total
+    return caminho, distancia_total, logs
 
 def main():
-    arquivo_json = "cidadesSCDistâncias.json"  # Nome do arquivo JSON
-    mapa = carregar_dados(arquivo_json)
+    caminho_arquivo = 'cidadesSCDistâncias.json'
+    mapa_cidades = carregar_dados(caminho_arquivo)
+    if not mapa_cidades:
+        return
     
-    origem = input("Digite a cidade de origem: ")
-    destino = input("Digite a cidade de destino: ")
+    origem = input("Cidade de origem: ").strip()
+    destino = input("Cidade de destino: ").strip()
     
-    caminho, distancia = encontrar_caminho_guloso(mapa, origem, destino)
+    if origem not in mapa_cidades:
+        print(f"[ERRO] Cidade de origem '{origem}' não encontrada!")
+        return
+    if destino not in mapa_cidades:
+        print(f"[ERRO] Cidade de destino '{destino}' não encontrada!")
+        return
     
-    if caminho:
-        print("Caminho encontrado:", " -> ".join(caminho))
-        print("Distância total percorrida:", distancia, "km")
-    else:
-        print("Erro:", distancia)
+    caminho, distancia_total, logs = algoritmo_guloso(mapa_cidades, origem, destino)
+    
+    print("\n=== LOG DE EXECUÇÃO ===")
+    for log in logs:
+        print(log)
+    
+    if not caminho:
+        print(f"\n[RESULTADO] Não foi possível encontrar um caminho entre {origem} e {destino}.")
+        return
+    
+    print("\n=== ROTA FINAL ===")
+    for i in range(len(caminho) - 1):
+        print(f"{caminho[i]} -> {caminho[i+1]}: {mapa_cidades[caminho[i]][caminho[i+1]]} km")
+    
+    print(f"\nDistância total percorrida: {distancia_total} km")
 
 if __name__ == "__main__":
     main()
